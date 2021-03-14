@@ -1,4 +1,5 @@
 import gi
+import subprocess 
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
@@ -7,21 +8,32 @@ from gi.repository import Gtk
 class MyWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="Custom Commands")
+        self.set_border_width(10)
+
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.add(vbox)
+
 
         self.button = Gtk.Button(label="Enable Data")
         self.button.connect("clicked", self.on_button_clicked)
-        self.add(self.button)
+        vbox.add(self.button)
         
         #exit button
         self.button2 = Gtk.Button(label="Exit")
         self.button2.connect("clicked", self.AppClose)
-        self.add(self.button2)
+        vbox.add(self.button2)
         
+        self.add(vbox)
         
         
 
     def on_button_clicked(self, widget):
-        print("Hello World")
+        print("Connecting WAN")
+        output = subprocess.Popen(['/usr/bin/ofonoctl', 'wan', '--connect','--ap'], text=True,
+        stdout=subprocess.PIPE)
+
+        stdout, _ = output.communicate()
+        print("output>>"+stdout)
         
     def AppClose(self, widget):
         exit()
